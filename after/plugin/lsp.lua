@@ -81,19 +81,65 @@ cmp.setup({
 
 require("mason").setup()
 require('mason-lspconfig').setup({
-  -- Replace the language servers listed here
-  -- with the ones you want to install
-  ensure_installed = {'pyright', 'pylsp', 'rust_analyzer', 'gopls', 'lua_ls', 'tsserver', 'emmet_language_server', 'cssls', 'dockerls', 'solidity_ls', 'jsonls'},
-  handlers = {
-    function(server_name)
-      require('lspconfig')[server_name].setup({})
-    end,
-  }
+    ensure_installed = { 'pyright', 'ruff', 'rust_analyzer', 'gopls', 'lua_ls', 'emmet_language_server', 'cssls', 'dockerls', 'solidity_ls', 'jsonls'},
+    handlers = {
+        -- Default handler for other servers
+        function(server_name)
+            require('lspconfig')[server_name].setup({})
+        end,
+        -- Custom handler for pyright
+        pyright = function()
+            require('lspconfig').pyright.setup({
+                on_attach = function(client, _)
+                    client.server_capabilities.hoverProvider = true
+                end,
+                capabilities = (function()
+                    local capabilities = vim.lsp.protocol.make_client_capabilities()
+                    capabilities.textDocument.publishDiagnostics.tagSupport.valueSet = { 2 }
+                    return capabilities
+                end)(),
+                settings = {
+                    python = {
+                        analysis = {
+                            useLibraryCodeForTypes = true,
+                            diagnosticSeverityOverrides = {
+                                reportUnusedVariable = "warning",
+                            },
+                            typeCheckingMode = "off",
+                            diagnosticMode = "off",
+                        },
+                    },
+                },
+            })
+        end,
+        -- Custom handler for ruff
+        ruff = function()
+            require('lspconfig').ruff.setup({
+                on_attach = function(client, _)
+                    if client.name == "ruff" then
+                        client.server_capabilities.hoverProvider = false
+                    end
+                end,
+                init_options = {
+                    settings = {
+                        args = {
+                            "--ignore", "F821",
+                            "--ignore", "E402",
+                            "--ignore", "E722",
+                            "--ignore", "E712",
+                        },
+                    },
+                },
+            })
+        end,
+    },
 })
+
 require("mason-null-ls").setup({
     ensure_installed = {"goimports"},
     automatic_installation = true,
 })
+
 
 local null_ls = require("null-ls")
 
@@ -103,13 +149,3 @@ null_ls.setup({
     },
 })
 
-require('lspconfig').pyright.setup({
-  settings = {
-    python = {
-      analysis = {
-        autoSearchPaths = true,
-        useLibraryCodeForTypes = true,
-      },
-    }
-  }
-})
