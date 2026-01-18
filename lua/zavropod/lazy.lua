@@ -25,6 +25,7 @@ local plugins = {
         'nvim-telescope/telescope.nvim',
         dependencies = {
             'nvim-lua/plenary.nvim',
+
             -- optional but recommended
             { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
         }
@@ -38,13 +39,13 @@ local plugins = {
     },
     {
         'nvim-treesitter/nvim-treesitter',
+        branch = 'master',
         lazy = false,
         build = ':TSUpdate'
     },
     'theprimeagen/harpoon',
     'tpope/vim-fugitive',
     'mbbill/undotree',
-
     {
         "williamboman/mason.nvim",
         "williamboman/mason-lspconfig.nvim",
