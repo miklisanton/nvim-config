@@ -39,9 +39,40 @@ local plugins = {
     },
     {
         'nvim-treesitter/nvim-treesitter',
-        branch = 'master',
         lazy = false,
-        build = ':TSUpdate'
+        branch = 'main',
+        build = ":TSUpdate",
+        init = function()
+            local parser_installed = {
+                "python",
+                "go",
+                "c",
+                "lua",
+                "vim",
+                "vimdoc",
+                "query",
+                "markdown_inline",
+                "markdown",
+            }
+
+            vim.defer_fn(function() require("nvim-treesitter").install(parser_installed) end, 1000)
+            require("nvim-treesitter").update()
+
+            -- auto-start highlights & indentation
+            vim.api.nvim_create_autocmd("FileType", {
+                desc = "User: enable treesitter highlighting",
+                callback = function(ctx)
+                    -- highlights
+                    local hasStarted = pcall(vim.treesitter.start) -- errors for filetypes with no parser
+
+                    -- indent
+                    local noIndent = {}
+                    if hasStarted and not vim.list_contains(noIndent, ctx.match) then
+                        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+                    end
+                end,
+            })
+        end
     },
     'theprimeagen/harpoon',
     'tpope/vim-fugitive',
@@ -74,24 +105,7 @@ local plugins = {
             {'rafamadriz/friendly-snippets'},
         }
     },
-
-    {
-        'nvim-tree/nvim-tree.lua',
-    },
-    {
-        "antosha417/nvim-lsp-file-operations",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            -- Uncomment whichever supported plugin(s) you use
-            "nvim-tree/nvim-tree.lua",
-            -- "nvim-neo-tree/neo-tree.nvim",
-            -- "simonmclean/triptych.nvim"
-        },
-        config = function()
-            require("lsp-file-operations").setup()
-        end,
-    },
-    ('github/copilot.vim'),
+    'github/copilot.vim',
 
 
     {
