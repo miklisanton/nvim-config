@@ -51,6 +51,23 @@ return require('packer').startup(function(use)
             {'rafamadriz/friendly-snippets'},
         }
     }
+
+use {
+  'nvim-tree/nvim-tree.lua',
+}
+use {
+    "antosha417/nvim-lsp-file-operations",
+    requires = {
+        "nvim-lua/plenary.nvim",
+        -- Uncomment whichever supported plugin(s) you use
+        "nvim-tree/nvim-tree.lua",
+        -- "nvim-neo-tree/neo-tree.nvim",
+        -- "simonmclean/triptych.nvim"
+    },
+    config = function()
+    require("lsp-file-operations").setup()
+    end,
+}
 use('github/copilot.vim')
 
 -- autosave
@@ -79,11 +96,11 @@ use({
       workspaces = {
         {
           name = "personal",
-          path = "~/vaults/personal",
+          path = "/Users/antonmiklis/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal",
         },
         {
           name = "work",
-          path = "~/vaults/work",
+          path = "/Users/antonmiklis/Library/Mobile Documents/iCloud~md~obsidian/Documents/work",
         },
       },
 
