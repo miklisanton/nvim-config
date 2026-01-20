@@ -45,6 +45,9 @@ local plugins = {
         init = function()
             local parser_installed = {
                 "python",
+                "typescript",
+                "javascript",
+                "vue",
                 "go",
                 "c",
                 "lua",
