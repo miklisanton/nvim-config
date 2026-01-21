@@ -46,17 +46,24 @@ local plugins = {
             local parser_installed = {
                 "python",
                 "go",
+                "typescript",
                 "c",
                 "lua",
                 "vim",
+                "javascript",
+                "vue",
                 "vimdoc",
                 "query",
                 "markdown_inline",
                 "markdown",
             }
 
-            vim.defer_fn(function() require("nvim-treesitter").install(parser_installed) end, 1000)
-            require("nvim-treesitter").update()
+            vim.defer_fn(
+            function()
+                local treesitter = require("nvim-treesitter")
+                treesitter.install(parser_installed)
+                treesitter.update()
+            end, 1000)
 
             -- auto-start highlights & indentation
             vim.api.nvim_create_autocmd("FileType", {
@@ -124,18 +131,6 @@ local plugins = {
         dependencies = {
             "nvim-lua/plenary.nvim",
         },
-        opts = {
-            workspaces = {
-                {
-                    name = "personal",
-                    path = "/Users/antonmiklis/Library/Mobile Documents/iCloud~md~obsidian/Documents/Personal",
-                },
-                {
-                    name = "work",
-                    path = "/Users/antonmiklis/Library/Mobile Documents/iCloud~md~obsidian/Documents/work",
-                },
-            },
-        }
     }
 }
 
