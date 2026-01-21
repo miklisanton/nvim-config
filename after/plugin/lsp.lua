@@ -12,17 +12,41 @@ local lsp_attach = function(client, bufnr)
   vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
   vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
 end
--- Configure ts_ls with nvim-lsp-ts-utils
+
+-- TYPESCRIPT
+local vue_language_server_path = '/Users/antonmiklis/.nvm/versions/node/v22.18.0/lib/node_modules/@vue/language-server';
+local tsserver_filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' }
+local vue_plugin = {
+  name = '@vue/typescript-plugin',
+  location = vue_language_server_path,
+  languages = { 'vue' },
+  configNamespace = 'typescript',
+}
 vim.lsp.config('ts_ls', {
+  init_options = {
+    plugins = {
+      vue_plugin,
+    },
+  },
+  filetypes = tsserver_filetypes,
   on_attach = function(client, bufnr)
     lsp_attach(client, bufnr)
   end,
 })
+vim.lsp.config('vue_ls', {
+  on_attach = function(client, bufnr)
+    lsp_attach(client, bufnr)
+  end,
+})
+vim.lsp.enable({'ts_ls', 'vue_ls'})
+
+-- PYTHON
 vim.lsp.config('pyright', {
   on_attach = function(client, bufnr)
     lsp_attach(client, bufnr)
   end,
 })
+-- GO
 vim.lsp.config('gopls', {
   on_attach = function(client, bufnr)
     lsp_attach(client, bufnr)
@@ -49,5 +73,5 @@ require("mason-null-ls").setup({ ensure_installed = {"goimports"} })
 local null_ls = require("null-ls")
 null_ls.setup({ sources = { null_ls.builtins.formatting.goimports } })
 -- Enable all configured servers
-vim.lsp.enable({ 'ts_ls', 'pyright', 'ruff', 'rust_analyzer', 'gopls', 'lua_ls', 'emmet_language_server', 'cssls', 'dockerls', 'solidity_ls', 'jsonls' })
+vim.lsp.enable({ 'vue_ls', 'ts_ls', 'pyright', 'ruff', 'rust_analyzer', 'gopls', 'lua_ls', 'emmet_language_server', 'cssls', 'dockerls', 'solidity_ls', 'jsonls' })
 
