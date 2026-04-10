@@ -7,6 +7,7 @@ local lsp_attach = function(client, bufnr)
   vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
   vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
   vim.keymap.set('n', '<leader>rr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+  vim.keymap.set('n', '<leader>ri', '<cmd>lua vim.lsp.buf.incoming_calls()<cr>', opts)
   vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
   vim.keymap.set('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
   vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
@@ -14,7 +15,7 @@ local lsp_attach = function(client, bufnr)
 end
 
 -- TYPESCRIPT
-local vue_language_server_path = '/Users/antonmiklis/.nvm/versions/node/v22.18.0/lib/node_modules/@vue/language-server';
+local vue_language_server_path = vim.fn.stdpath("data") .. '/mason/packages/vue-language-server/node_modules/@vue/language-server';
 local tsserver_filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' }
 local vue_plugin = {
   name = '@vue/typescript-plugin',
