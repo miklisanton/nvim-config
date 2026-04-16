@@ -27,7 +27,22 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 
 vim.keymap.set("n", "Q", "<nop>")
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
+vim.keymap.set("n", "<leader>f", function()
+  local ft = vim.bo.filetype
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  local names = vim.tbl_map(function(c) return c.name end, clients)
+  vim.notify("LSP clients: " .. table.concat(names, ", ") .. " | ft: " .. ft, vim.log.levels.INFO)
+  local prefer
+  if ft == "python" then
+    prefer = "ruff"
+  elseif vim.tbl_contains({ "javascript", "typescript", "vue", "css", "html", "json" }, ft) then
+    prefer = "null-ls"
+  end
+  vim.lsp.buf.format({
+    async = true,
+    filter = prefer and function(c) return c.name == prefer end or nil,
+  })
+end)
 
 vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
 vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")

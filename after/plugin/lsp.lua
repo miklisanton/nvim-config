@@ -88,6 +88,20 @@ vim.lsp.config('ruff', {
     lsp_attach(client, bufnr)
   end,
 })
+-- JAVA (jdtls needs per-project workspace dir — use FileType autocmd)
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'java',
+  callback = function()
+    local project = vim.fn.fnamemodify(vim.fn.getcwd(), ':t')
+    local workspace = vim.fn.stdpath('data') .. '/jdtls-workspace/' .. project
+    vim.lsp.start({
+      name = 'jdtls',
+      cmd = { 'jdtls', '-data', workspace },
+      root_dir = vim.fs.root(0, { 'pom.xml', 'build.gradle', 'build.gradle.kts', '.git' }),
+      on_attach = lsp_attach,
+    })
+  end,
+})
 -- GO
 vim.lsp.config('gopls', {
   on_attach = function(client, bufnr)
@@ -111,11 +125,14 @@ cmp.setup({
   mapping = cmp.mapping.preset.insert({}),
 })
 require("mason").setup()
-require("mason-null-ls").setup({ ensure_installed = {"goimports", "mypy"} })
+require("mason-null-ls").setup({ ensure_installed = {"goimports", "mypy", "prettier"} })
 local null_ls = require("null-ls")
 null_ls.setup({ sources = {
   null_ls.builtins.formatting.goimports,
   null_ls.builtins.diagnostics.mypy.with({ prefer_local = ".venv/bin" }),
+  null_ls.builtins.formatting.prettier.with({
+    filetypes = { "javascript", "typescript", "vue", "css", "html", "json", "yaml", "markdown" },
+  }),
 } })
 -- Enable all configured servers
 vim.lsp.enable({ 'vue_ls', 'ts_ls', 'pyright', 'ruff', 'rust_analyzer', 'gopls', 'lua_ls', 'emmet_language_server', 'cssls', 'dockerls', 'solidity_ls', 'jsonls' })

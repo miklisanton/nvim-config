@@ -59,6 +59,7 @@ local plugins = {
                 "query",
                 "markdown_inline",
                 "markdown",
+                "java",
             }
 
             vim.defer_fn(
